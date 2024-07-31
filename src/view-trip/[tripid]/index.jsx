@@ -55,9 +55,9 @@ function ViewTrip() {
         <Hotels tripInfo={tripData}/>
     
         {/* Daily Plan  */}
+        
     </div>
     </>
     )
 }
-
 export default ViewTrip
