@@ -84,13 +84,8 @@ function CreateTrip() {
   }
 
   const handleFormSubmit = async () => {
-
     const user = localStorage.getItem('user')
     //
-    if (!user) {
-      setOpenDialog(true);
-    } 
-    else {
       console.log(user);
       //Checking if all the fields are filled
       if (formData.location && formData.duration_of_trip && formData.budget && formData.travel_with) {
@@ -124,7 +119,6 @@ function CreateTrip() {
           description: 'Please fill all the fields',
         })
       }
-    }
   }
   //Rendering the form
   return (
