@@ -6,23 +6,22 @@ import { chatSession } from '@/service/AIModal'
 import { Button } from "@/components/ui/button"
 import { SelectBudgetOptions, SelectTravelsList, PROMPT } from '@/constants/options'
 import { doc, setDoc } from "firebase/firestore"
-import { AiOutlineLoading3Quarters } from "react-icons/ai";
 import { db } from '@/service/FirebaseConfig'
 
-import axios from 'axios'
-import { useNavigate} from 'react-router-dom'
+import { useNavigate } from 'react-router-dom'
+
+import { ring2 } from 'ldrs'
 
 
-//Creating a function to create a trip
 function CreateTrip() {
-  //Creating a state to store the place
+
   const [place, setPlace] = React.useState('')
-  //Creating a state to store the number of days
+
   const [days, setDays] = React.useState('')
-  //Creating a state to store the form data
+
   const [formData, setFormData] = React.useState([])
 
-  //Using the useToast hook
+
   const { toast } = useToast()
 
   const [loading, setLoading] = useState(false)
@@ -31,6 +30,10 @@ function CreateTrip() {
 
   const [openDialog, setOpenDialog] = React.useState(false)
 
+  useEffect(()=>{
+    ring2.register()
+  },[])
+
   const handleInputChange = (name, value) => {
     setFormData({
       ...formData,
@@ -38,12 +41,12 @@ function CreateTrip() {
     })
   }
 
-  let docid ;
+  let docid;
 
-  const saveTripData = async(tripdata) => {
+  const saveTripData = async (tripdata) => {
     docid = Date.now().toString()
     setLoading(true)
-    await setDoc(doc(db, "ai-trips", docid ), {
+    await setDoc(doc(db, "ai-trips", docid), {
       userSelection: formData,
       tripdata: JSON.parse(tripdata),
       id: docid
@@ -126,13 +129,12 @@ function CreateTrip() {
 
       <div className='my-10 flex flex-col items-center'>
         <Button
-        disabled={loading}
-        className='w-full'
-        onClick={handleFormSubmit}>
-        {loading? <AiOutlineLoading3Quarters />  : ' '}
-        Generate Trip
+          disabled={loading}
+          className='w-full'
+          onClick={handleFormSubmit}>
+          {loading ?<div><l-ring-2 size="25" stroke="3" stroke-length="0.25" bg-opacity="0.1" speed="0.8" color="white" ></l-ring-2> </div>: "Generate Trip"}
         </Button>
-        
+
       </div>
     </div>
   )
