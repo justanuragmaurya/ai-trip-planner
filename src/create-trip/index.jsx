@@ -5,18 +5,8 @@ import { useToast } from '@/components/ui/use-toast'
 import { chatSession } from '@/service/AIModal'
 import { Button } from "@/components/ui/button"
 import { SelectBudgetOptions, SelectTravelsList, PROMPT } from '@/constants/options'
-import { toast } from '@/components/ui/use-toast'
-import { doc, documentId, setDoc } from "firebase/firestore"
+import { doc, setDoc } from "firebase/firestore"
 import { AiOutlineLoading3Quarters } from "react-icons/ai";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog"
-import { useGoogleLogin } from '@react-oauth/google'
 import { db } from '@/service/FirebaseConfig'
 
 import axios from 'axios'
@@ -48,77 +38,44 @@ function CreateTrip() {
     })
   }
 
-  const login = useGoogleLogin({
-    onSuccess: (user) => getUserProfile(user),
-    onError: (error) => console.log(error)
-  })
-
-  const getUserProfile = (tokenInfo) => {
-    axios.get(`https://www.googleapis.com/oauth2/v1/userinfo?access_token=${tokenInfo?.access_token}`, {
-      headers: {
-        Authorization: `Bearer ${tokenInfo?.access_token}`,
-        Accept: 'Application/json'
-      }
-    }).then((res) => {
-      console.log(res);
-      localStorage.setItem("user", JSON.stringify(res.data))
-      setOpenDialog(false)
-      handleFormSubmit();
-    })
-  }
-
-
   let docid ;
 
-  const saveTripData = async(tripdata) =>{
+  const saveTripData = async(tripdata) => {
     docid = Date.now().toString()
-    const user = JSON.parse(localStorage.getItem('user'))
     setLoading(true)
     await setDoc(doc(db, "ai-trips", docid ), {
-      userSelection:formData,
+      userSelection: formData,
       tripdata: JSON.parse(tripdata),
-      userEmail: user.email,
       id: docid
     });
     setLoading(false)
   }
 
   const handleFormSubmit = async () => {
-    const user = localStorage.getItem('user')
-    //
-      console.log(user);
-      //Checking if all the fields are filled
-      if (formData.location && formData.duration_of_trip && formData.budget && formData.travel_with) {
-        //Showing a success toast
-        toast({
-          title: 'Success',
-          description: 'Form Submitted Successfully',
-        })
+    if (formData.location && formData.duration_of_trip && formData.budget && formData.travel_with) {
+      toast({
+        title: 'Success',
+        description: 'Form Submitted Successfully',
+      })
 
-        setLoading(true)
-        //Replaceing variables in Propmt with the data to ffed ai
-        const finalPrompt = PROMPT.replace('{location}', formData?.location)
-          .replace('{duration_of_trip}', formData?.duration_of_trip)
-          .replace('{budget}', formData?.budget)
-          .replace('{travel_with}', formData?.travel_with)
-          .replace('{duration_of_trip}', formData?.duration_of_trip)
-        //Sending the data to AI
-        const result = await chatSession.sendMessage(finalPrompt)
-        console.log(result?.response?.text())
-        //Saving the trip data to firebase
-        setLoading(false)
-        saveTripData(result?.response?.text())
-        router(`/view-trip/${docid}`)
-
-      }
-      //Showing an error toast if any field is empty
-      else {
-        toast({
-          variant: "destructive",
-          title: 'Error',
-          description: 'Please fill all the fields',
-        })
-      }
+      setLoading(true)
+      const finalPrompt = PROMPT.replace('{location}', formData?.location)
+        .replace('{duration_of_trip}', formData?.duration_of_trip)
+        .replace('{budget}', formData?.budget)
+        .replace('{travel_with}', formData?.travel_with)
+        .replace('{duration_of_trip}', formData?.duration_of_trip)
+      const result = await chatSession.sendMessage(finalPrompt)
+      console.log(result?.response?.text())
+      setLoading(false)
+      saveTripData(result?.response?.text())
+      router(`/view-trip/${docid}`)
+    } else {
+      toast({
+        variant: "destructive",
+        title: 'Error',
+        description: 'Please fill all the fields',
+      })
+    }
   }
   //Rendering the form
   return (
@@ -177,24 +134,6 @@ function CreateTrip() {
         </Button>
         
       </div>
-
-      <Dialog open={openDialog}>
-        <DialogContent>
-          <DialogHeader>
-            <DialogDescription>
-              <div className='p-4 flex-col gap-4'>
-                <img src="/logo.svg" />
-                <h2 className=' font-bold text-lg mt-7 py-2'>Sign In with Google</h2>
-                <p className='text-gray-500'>Sign in to the app with google auth securely</p>
-                <Button
-                  onClick={login}
-                  className="mt-10 w-full"> <img width="25px" className='m-3' src='https://upload.wikimedia.org/wikipedia/commons/thumb/c/c1/Google_%22G%22_logo.svg/480px-Google_%22G%22_logo.svg.png'></img>Sign In with Google </Button>
-              </div>
-            </DialogDescription>
-          </DialogHeader>
-        </DialogContent>
-      </Dialog>
-
     </div>
   )
 }

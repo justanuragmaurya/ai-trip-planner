@@ -6,7 +6,7 @@ import { db } from '@/service/FirebaseConfig';
 import { getDoc } from 'firebase/firestore';
 import InfoSection from '../components/InfoSection';
 import Hotels from '../components/Hotels';
-import { Hotel } from 'lucide-react';
+import Dailyplan from '../components/Dailyplan';
 
 function ViewTrip() {
 
@@ -37,8 +37,8 @@ function ViewTrip() {
 
     //Using the useEffect hook
     useEffect(() => {
+        console.log(tripData)
         tripid&&getTrip();
-
     }, [tripid])
   
   
@@ -55,6 +55,7 @@ function ViewTrip() {
         <Hotels tripInfo={tripData}/>
     
         {/* Daily Plan  */}
+        <Dailyplan  tripInfo={tripData} />
         
     </div>
     </>

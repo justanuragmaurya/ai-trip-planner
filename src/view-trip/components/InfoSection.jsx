@@ -13,7 +13,7 @@ function InfoSection({ tripInfo }) {
     return (
         <>
         <div>
-            <img src='https://deih43ym53wif.cloudfront.net/berlin-germany-shutterstock_314149679_87b7a543ce.jpeg'
+            <img src='https://wallpapers.com/images/hd/aeroplane-dark-blue-cloudy-sky-view-q0i4v3qwslowbqpv.jpg'
             className='h-[340px] w-full object-cover rounded-xl' />
         <div className='flex justify-between items-center'>
             <div className='my-5 flex flex-col gap-2'>
@@ -24,7 +24,7 @@ function InfoSection({ tripInfo }) {
                     <h2 className='p-1 px-3 bg-slate-200 rounded-xl text-gray-500 text-xs md:text-sm'> Traveling along {tripInfo.userSelection.travel_with + " "}</h2>
                 </div>
             </div>
-            <Button> <IoIosSend /> Share </Button>
+            <Button className="flex gap-2"> <IoIosSend />  Email Me </Button>
         </div>
 
             </div>
